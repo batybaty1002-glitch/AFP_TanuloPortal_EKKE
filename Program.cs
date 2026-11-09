@@ -1,6 +1,7 @@
 using TanuloPortal.Data;
 using TanuloPortal.Models;
 using Microsoft.EntityFrameworkCore;
+using TanuloPortal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
+builder.Services.AddScoped<IAiService, AiService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
