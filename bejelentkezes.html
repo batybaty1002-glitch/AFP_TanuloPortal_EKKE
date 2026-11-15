@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bejelentkezés - TanulóPortál</title>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>TanulóPortál</h1>
+            <p>Jelentkezz be a tanulói fiókodba!</p>
+        </header>
+
+        <section>
+            <h2 id="bejelentkezes">Bejelentkezés</h2>
+
+            <form id="bejelentkezes-űrlap">
+                <div>
+                    <label for="username">Felhasználónév</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required>
+                </div>
+
+                <div>
+                    <label for="password">Jelszó</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
+                </div>
+
+                <button type="button" id="bejelentkezesgomb">Bejelentkezés</button>
+            </form>
+
+            <p>Még nincs fiókod? <a href="regisztracio.html">Regisztráció</a></p>
+        </section>
+    </main>
+</body>
+</html>
