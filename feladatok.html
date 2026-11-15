@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feladataim - TanulóPortál</title>
+</head>
+<body>
+    <div>
+        <aside>
+            <header>
+                <h1>TanulóPortál</h1>
+            </header>
+
+            <nav>
+                <ul>
+                    <li><a href="fooldal.html">Főoldal</a></li>
+                    <li><a href="feladatok.html">Feladataim</a></li>
+                    <li><a href="kviz.html">AI-kvíz</a></li>
+                </ul>
+            </nav>
+
+            <footer>
+                <a href="bejelentkezes.html">Kijelentkezés</a>
+            </footer>
+        </aside>
+
+        <main>
+            <header>
+                <h2>Feladataim</h2>
+                <p>Tervezd meg és kövesd nyomon a tanulási feladataidat!</p>
+            </header>
+
+            <section>
+                <h3 id="újfeladatok">Új feladat hozzáadása</h3>
+
+                <form id="feladat-űrlap">
+                    <div>
+                        <label for="task-title">Feladat címe</label>
+                        <input type="text" id="task-title" name="title" required>
+                    </div>
+
+                    <div>
+                        <label for="task-description">Leírás</label>
+                        <textarea id="task-description" name="description" rows="4"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="task-status">Állapot</label>
+                        <select id="task-status" name="status">
+                            <option value="planned" selected>Tervezett</option>
+                            <option value="in-progress">Folyamatban</option>
+                            <option value="completed">Kész</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="task-priority">Prioritás</label>
+                        <select id="task-priority" name="priority">
+                            <option value="Low">Alacsony</option>
+                            <option value="Normal">Normál</option>
+                            <option value="Hihg">Magas</option>
+                        </select>
+                    </div>
+
+                    <button type="button" id="feladathozzaadasa">Feladat hozzáadása</button>
+                </form>
+            </section>
+
+            <section>
+                <h3 id="feladatatok">Feladatlista</h3>
+                <ul id="feladatlista">
+                    <li>A feladatok itt jelennek majd meg.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
