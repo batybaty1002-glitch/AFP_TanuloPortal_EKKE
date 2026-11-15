@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-kvíz - TanulóPortál</title>
+</head>
+<body>
+    <div>
+        <aside>
+            <header>
+                <h1>TanulóPortál</h1>
+            </header>
+
+            <nav>
+                <ul>
+                    <li><a href="fooldal.html">Főoldal</a></li>
+                    <li><a href="feladatok.html">Feladataim</a></li>
+                    <li><a href="kviz.html">AI-kvíz</a></li>
+                </ul>
+            </nav>
+
+            <footer>
+                <a href="bejelentkezes.html">Kijelentkezés</a>
+            </footer>
+        </aside>
+
+        <main>
+            <header>
+                <h2>Kvíz</h2>
+                <p>Adj meg egy témát, és készíts gyakorló kvízt.</p>
+            </header>
+
+            <section>
+                <h3 id="kvízbeállítások">Kvíz beállítása</h3>
+
+                <form id="kvízűrlap">
+                    <div>
+                        <label for="quiz-topic">Kvíz témája</label>
+                        <input type="text" id="quiz-topic" name="topic" placeholder="Például:" required>
+                    </div>
+
+                    <div>
+                        <label for="question-count">Kérdések száma (1–10)</label>
+                        <input type="number" id="question-count" name="questionCount" min="1" max="10" value="3" required>
+                    </div>
+
+                    <button type="button" id="generate-quiz-button">Kvíz generálása</button>
+                </form>
+            </section>
+
+            <section>
+                <h3 id="quiz-results-heading">Kvíz</h3>
+                <div id="quiz-results">
+                    <p>A generált kérdések itt jelennek majd meg.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
