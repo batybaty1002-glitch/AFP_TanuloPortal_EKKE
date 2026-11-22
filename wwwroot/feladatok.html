@@ -21,7 +21,7 @@
             </nav>
 
             <footer>
-                <a href="bejelentkezes.html">Kijelentkezés</a>
+                <a href="bejelentkezes.html" id="kijelentkezes-link">Kijelentkezés</a>
             </footer>
         </aside>
 
@@ -32,7 +32,7 @@
             </header>
 
             <section>
-                <h3 id="újfeladatok">Új feladat hozzáadása</h3>
+                <h3 id="uj-feladat">Új feladat hozzáadása</h3>
 
                 <form id="feladat-űrlap">
                     <div>
@@ -63,8 +63,9 @@
                         </select>
                     </div>
 
-                    <button type="button" id="feladathozzaadasa">Feladat hozzáadása</button>
+                    <button type="submit">Feladat hozzáadása</button>
                 </form>
+                <p id="feladat-uzenet" hidden></p>
             </section>
 
             <section>
@@ -75,5 +76,9 @@
             </section>
         </main>
     </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/tasks.js"></script>
 </body>
 </html>
