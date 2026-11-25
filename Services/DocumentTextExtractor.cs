@@ -48,7 +48,8 @@ public static class DocumentTextExtractor
         foreach (DocumentFormat.OpenXml.Presentation.SlideId slideId in presentationPart.Presentation.SlideIdList)
         {
             if (slideId.RelationshipId?.Value is string relId &&
-                presentationPart.GetPartById(relId) is SlidePart slidePart)
+                presentationPart.GetPartById(relId) is SlidePart slidePart &&
+                slidePart.Slide != null)
             {
                 var texts = slidePart.Slide.Descendants<DocumentFormat.OpenXml.Drawing.Text>();
                 foreach (var text in texts)
