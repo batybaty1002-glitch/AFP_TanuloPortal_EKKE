@@ -9,7 +9,7 @@ namespace TanuloPortal.Data
 
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<TimetableItem> TimetableItems { get; set; }
+        public DbSet<TimeTableItem> TimeTableItems { get; set; }
     }
 
     

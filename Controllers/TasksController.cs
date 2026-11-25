@@ -16,14 +16,12 @@ namespace TanuloPortal.Controllers
             _context = context;
         }
 
-        // GET: api/tasks
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
         {
             return await _context.Tasks.ToListAsync();
         }
 
-        // POST: api/tasks
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask(TaskItem taskItem)
         {
@@ -33,7 +31,6 @@ namespace TanuloPortal.Controllers
             return CreatedAtAction(nameof(GetTasks), new { id = taskItem.Id }, taskItem);
         }
 
-        // PUT: api/tasks/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(int id, TaskItem taskItem)
         {
@@ -63,7 +60,6 @@ namespace TanuloPortal.Controllers
             return NoContent();
         }
 
-        // DELETE: api/tasks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
