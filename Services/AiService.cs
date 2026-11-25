@@ -17,13 +17,11 @@ public class AiService : IAiService
         _httpClient = new HttpClient();
         _apiKey = configuration["GroqSettings:ApiKey"] 
                   ?? throw new InvalidOperationException("Hiányzik a GroqSettings:ApiKey konfiguráció!");
-        _model = configuration["GroqSettings:Model"] ?? "llama-3.3-70b-versatile";
+        _model = configuration["GroqSettings:Model"] ?? "openai/gpt-oss-120b";
     }
 
     public async Task<QuizResponse> GenerateQuizAsync(QuizRequest request)
     {
-        var url = "https://api.groq.com/openai/v1/chat/completions";
-
         var promptText = $@"Egy egyetemi oktató asszisztens vagy. Készíts egy magyar nyelvű kvízt a következő témában: '{request.Topic}'.
 A kérdések pontos száma: {request.QuestionCount}.
 A válaszod KIZÁRÓLAG érvényes JSON objektum legyen pontosan ebben a struktúrában:
@@ -36,6 +34,38 @@ A válaszod KIZÁRÓLAG érvényes JSON objektum legyen pontosan ebben a strukt�
     }}
   ]
 }}";
+
+        return await SendGroqQuizRequestAsync(promptText);
+    }
+
+    public async Task<QuizResponse> GenerateQuizFromTextAsync(string documentText, int questionCount)
+    {
+        var trimmedText = documentText.Length > 15000 
+            ? documentText[..15000] 
+            : documentText;
+
+        var promptText = $@"Egy egyetemi oktató asszisztens vagy. Készíts egy magyar nyelvű kvízt KIZÁRÓLAG az alábbi tananyag szövege alapján! Ne használj külső információt, ami nincs benne a szövegben.
+A kérdések pontos száma: {questionCount}.
+A válaszod KIZÁRÓLAG érvényes JSON objektum legyen pontosan ebben a struktúrában:
+{{
+  ""questions"": [
+    {{
+      ""question"": ""A kérdés szövege?"",
+      ""options"": [""Válasz 1"", ""Válasz 2"", ""Válasz 3"", ""Válasz 4""],
+      ""correctAnswerIndex"": 0
+    }}
+  ]
+}}
+
+--- TANANYAG SZÖVEGE ---
+{trimmedText}";
+
+        return await SendGroqQuizRequestAsync(promptText);
+    }
+
+    private async Task<QuizResponse> SendGroqQuizRequestAsync(string promptText)
+    {
+        var url = "https://api.groq.com/openai/v1/chat/completions";
 
         var payload = new
         {
