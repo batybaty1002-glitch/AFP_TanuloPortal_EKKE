@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TanuloPortal.Models
 {
-    public class TimetableItem
+    public class TimeTableItem
     {
         public int Id { get; set; }
 
@@ -13,10 +13,10 @@ namespace TanuloPortal.Models
         public int DayOfWeek { get; set; }
 
         [Required]
-        public string StartTime { get; set; } = string.Empty; 
+        public string StartTime { get; set; } = string.Empty;
 
         [Required]
-        public string EndTime { get; set; } = string.Empty;   
+        public string EndTime { get; set; } = string.Empty;
 
         public string? Room { get; set; }
 
