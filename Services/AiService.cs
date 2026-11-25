@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -14,19 +15,18 @@ public class AiService : IAiService
     public AiService(IConfiguration configuration)
     {
         _httpClient = new HttpClient();
-        _apiKey = configuration["GeminiSettings:ApiKey"] 
-                  ?? throw new InvalidOperationException("Hiányzik a GeminiSettings:ApiKey konfiguráció!");
-        _model = configuration["GeminiSettings:Model"] ?? "gemini-1.5-flash";
+        _apiKey = configuration["GroqSettings:ApiKey"] 
+                  ?? throw new InvalidOperationException("Hiányzik a GroqSettings:ApiKey konfiguráció!");
+        _model = configuration["GroqSettings:Model"] ?? "llama-3.3-70b-versatile";
     }
 
     public async Task<QuizResponse> GenerateQuizAsync(QuizRequest request)
     {
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_model}:generateContent?key={_apiKey}";
+        var url = "https://api.groq.com/openai/v1/chat/completions";
 
-        var promptText = $@"Egy egyetemi oktató asszisztens vagy. Készíts egy kvízt a következő témában: '{request.Topic}'.
+        var promptText = $@"Egy egyetemi oktató asszisztens vagy. Készíts egy magyar nyelvű kvízt a következő témában: '{request.Topic}'.
 A kérdések pontos száma: {request.QuestionCount}.
-A válaszod KIZÁRÓLAG érvényes JSON szöveg legyen, Markdown kódblokkok (pl. ```json) nélkül!
-A JSON struktúrája pontosan ez legyen:
+A válaszod KIZÁRÓLAG érvényes JSON objektum legyen pontosan ebben a struktúrában:
 {{
   ""questions"": [
     {{
@@ -39,38 +39,34 @@ A JSON struktúrája pontosan ez legyen:
 
         var payload = new
         {
-            contents = new[]
+            model = _model,
+            messages = new[]
             {
-                new
-                {
-                    parts = new[]
-                    {
-                        new { text = promptText }
-                    }
-                }
-            }
+                new { role = "system", content = "Mindig csak valid JSON-t válaszolj a megadott sémával." },
+                new { role = "user", content = promptText }
+            },
+            response_format = new { type = "json_object" },
+            temperature = 0.5
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync(url, content);
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        httpRequest.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.SendAsync(httpRequest);
 
         if (!response.IsSuccessStatusCode)
         {
             var errText = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Gemini API hiba ({response.StatusCode}): {errText}");
+            throw new Exception($"Groq API hiba ({response.StatusCode}): {errText}");
         }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
         var rootNode = JsonNode.Parse(jsonResponse);
-        var rawGeneratedText = rootNode?["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString() ?? "";
-
-        var cleaned = rawGeneratedText.Trim();
-        if (cleaned.StartsWith("```json")) cleaned = cleaned.Substring(7);
-        if (cleaned.StartsWith("```")) cleaned = cleaned.Substring(3);
-        if (cleaned.EndsWith("```")) cleaned = cleaned.Substring(0, cleaned.Length - 3);
+        var generatedJson = rootNode?["choices"]?[0]?["message"]?["content"]?.ToString() ?? "{}";
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var quiz = JsonSerializer.Deserialize<QuizResponse>(cleaned.Trim(), options);
+        var quiz = JsonSerializer.Deserialize<QuizResponse>(generatedJson, options);
 
         return quiz ?? new QuizResponse();
     }
