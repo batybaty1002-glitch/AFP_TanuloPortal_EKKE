@@ -40,31 +40,51 @@ public class AiController : ControllerBase
     }
     [HttpPost("generate-quiz-from-file")]
     public async Task<IActionResult> GenerateQuizFromFile(IFormFile file, [FromForm] int questionCount = 5)
-{
-    if (file == null || file.Length == 0)
-        return BadRequest(new { message = "Nem töltöttél fel fájlt, vagy a fájl üres." });
-
-    if (questionCount < 1 || questionCount > 10)
-        return BadRequest(new { message = "A kérdések száma 1 és 10 között lehet." });
-
-    try
     {
-        var extractedText = await DocumentTextExtractor.ExtractTextAsync(file);
+        if (file == null || file.Length == 0)
+            return BadRequest(new { message = "Nem töltöttél fel fájlt, vagy a fájl üres." });
 
-        if (string.IsNullOrWhiteSpace(extractedText))
-            return BadRequest(new { message = "Nem sikerült olvasható szöveget kinyerni a fájlból (pl. szkennelt kép alapú PDF)." });
+        if (questionCount < 1 || questionCount > 10)
+            return BadRequest(new { message = "A kérdések száma 1 és 10 között lehet." });
 
-        var quiz = await _aiService.GenerateQuizFromTextAsync(extractedText, questionCount);
-        return Ok(quiz);
+        try
+        {
+            var extractedText = await DocumentTextExtractor.ExtractTextAsync(file);
+
+            if (string.IsNullOrWhiteSpace(extractedText))
+                return BadRequest(new { message = "Nem sikerült olvasható szöveget kinyerni a fájlból (pl. szkennelt kép alapú PDF)." });
+
+            var quiz = await _aiService.GenerateQuizFromTextAsync(extractedText, questionCount);
+            return Ok(quiz);
+        }
+        catch (NotSupportedException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Hiba történt a fájl alapú kvíz generálása közben.", details = ex.Message });
+        }
     }
-    catch (NotSupportedException ex)
-    {
-        return BadRequest(new { message = ex.Message });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new { message = "Hiba történt a fájl alapú kvíz generálása közben.", details = ex.Message });
-    }
-}
     
+    [HttpPost("generate-study-plan")]
+    public async Task<ActionResult<StudyPlanResponse>> GenerateStudyPlan([FromBody] StudyPlanRequest? request)
+    {
+        request ??= new StudyPlanRequest();
+
+        if (request.MaxDays < 1 || request.MaxDays > 30)
+        {
+            return BadRequest(new { message = "A napok száma 1 és 30 között lehet." });
+        }
+
+        try
+        {
+            var plan = await _aiService.GenerateStudyPlanAsync(request);
+            return Ok(plan);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Hiba történt a tanulási terv generálása közben.", details = ex.Message });
+        }
+    }
 }
